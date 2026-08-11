@@ -532,9 +532,7 @@
   <!-- Lightbox for full-screen view -->
   <div class="lightbox" id="lightbox" onclick="closeLightbox(event)">
     <button class="lightbox-close" onclick="closeLightbox(event)">✕</button>
-    <button class="lightbox-nav lb-prev" onclick="lightboxNav(event, -1)">‹</button>
     <img id="lightboxImg" src="" alt="Full view" />
-    <button class="lightbox-nav lb-next" onclick="lightboxNav(event, 1)">›</button>
   </div>
 
   <div class="bday-wrap" id="bwrap">
@@ -552,47 +550,23 @@
 
     <h1 class="title">Happy Birthday</h1>
     <div class="title-name">Samvarsha! 🎉</div>
-    <p class="subtitle">Click photos to zoom ✨</p>
+    <p class="subtitle">Click the photo to zoom ✨</p>
 
-    <!-- Photo Gallery -->
+    <!-- Photo -->
     <div class="gallery-section">
       <div class="gallery-container" id="galleryContainer">
-        <div class="gallery-track" id="galleryTrack">
-          <div class="gallery-slide">
-            <span class="gallery-badge">1 / 2</span>
-            <img
-              src="images/birthday-collage.jpg"
-              alt="Happy Birthday Samvarsha — photo collage"
-              onclick="openLightbox(0)"
-              style="cursor: zoom-in;"
-            />
-            <div class="gallery-label">
-              <div class="gallery-label-title">✨ Birthday Queen ✨</div>
-              <div class="gallery-label-sub">Happy Birthday Samvarsha!</div>
-            </div>
-          </div>
-          <div class="gallery-slide">
-            <span class="gallery-badge">2 / 2</span>
-            <img
-              src="images/letter.png"
-              alt="A heartfelt letter from Phani to Mini"
-              onclick="openLightbox(1)"
-              style="cursor: zoom-in;"
-            />
-            <div class="gallery-label">
-              <div class="gallery-label-title">💌 A Letter For You</div>
-              <div class="gallery-label-sub">With love and confidence — Your's Phani</div>
-            </div>
+        <div class="gallery-slide">
+          <img
+            src="images/birthday-collage.jpg"
+            alt="Happy Birthday Samvarsha — photo collage"
+            onclick="openLightbox()"
+            style="cursor: zoom-in;"
+          />
+          <div class="gallery-label">
+            <div class="gallery-label-title">✨ Birthday Queen ✨</div>
+            <div class="gallery-label-sub">Happy Birthday Samvarsha!</div>
           </div>
         </div>
-
-        <button class="gallery-nav prev" onclick="changeSlide(-1)" aria-label="Previous photo">‹</button>
-        <button class="gallery-nav next" onclick="changeSlide(1)" aria-label="Next photo">›</button>
-      </div>
-
-      <div class="gallery-dots" id="galleryDots">
-        <button class="gallery-dot active" data-idx="0" onclick="goToSlide(0)" aria-label="Photo 1"></button>
-        <button class="gallery-dot" data-idx="1" onclick="goToSlide(1)" aria-label="Photo 2"></button>
       </div>
     </div>
 
@@ -601,101 +575,28 @@
   </div>
 
   <script>
-    // ─── Gallery State ─────────────────────────────────────────────
-    let currentSlide = 0;
-    const totalSlides = 2;
-    const imageSources = [
-      'images/birthday-collage.jpg',
-      'images/letter.png'
-    ];
-    let autoSlideTimer = null;
-
-    function changeSlide(dir) {
-      currentSlide = (currentSlide + dir + totalSlides) % totalSlides;
-      updateGallery();
-      resetAutoSlide();
-    }
-
-    function goToSlide(idx) {
-      currentSlide = idx;
-      updateGallery();
-      resetAutoSlide();
-    }
-
-    function updateGallery() {
-      const track = document.getElementById('galleryTrack');
-      track.style.transform = `translateX(-${currentSlide * 100}%)`;
-
-      document.querySelectorAll('.gallery-dot').forEach((dot, i) => {
-        dot.classList.toggle('active', i === currentSlide);
-      });
-    }
-
-    function startAutoSlide() {
-      autoSlideTimer = setInterval(() => {
-        currentSlide = (currentSlide + 1) % totalSlides;
-        updateGallery();
-      }, 5000);
-    }
-
-    function resetAutoSlide() {
-      clearInterval(autoSlideTimer);
-      startAutoSlide();
-    }
-
-    // ─── Touch/Swipe Support ───────────────────────────────────────
-    let touchStartX = 0;
-    let touchEndX = 0;
-
-    const galleryEl = document.getElementById('galleryContainer');
-
-    galleryEl.addEventListener('touchstart', (e) => {
-      touchStartX = e.changedTouches[0].screenX;
-    }, { passive: true });
-
-    galleryEl.addEventListener('touchend', (e) => {
-      touchEndX = e.changedTouches[0].screenX;
-      const diff = touchStartX - touchEndX;
-      if (Math.abs(diff) > 50) {
-        changeSlide(diff > 0 ? 1 : -1);
-      }
-    }, { passive: true });
-
     // ─── Lightbox ──────────────────────────────────────────────────
-    function openLightbox(idx) {
-      currentSlide = idx;
+    function openLightbox() {
       const lb = document.getElementById('lightbox');
-      const img = document.getElementById('lightboxImg');
-      img.src = imageSources[idx];
+      document.getElementById('lightboxImg').src = 'images/birthday-collage.jpg';
       lb.classList.add('open');
       document.body.style.overflow = 'hidden';
     }
 
     function closeLightbox(e) {
       if (e.target.tagName === 'IMG') return;
-      if (e.target.classList.contains('lightbox-nav') || e.target.classList.contains('lb-prev') || e.target.classList.contains('lb-next')) return;
       const lb = document.getElementById('lightbox');
       lb.classList.remove('open');
       document.body.style.overflow = '';
     }
 
-    function lightboxNav(e, dir) {
-      e.stopPropagation();
-      currentSlide = (currentSlide + dir + totalSlides) % totalSlides;
-      document.getElementById('lightboxImg').src = imageSources[currentSlide];
-      updateGallery();
-    }
-
     // Close lightbox on Escape
     document.addEventListener('keydown', (e) => {
-      const lb = document.getElementById('lightbox');
-      if (!lb.classList.contains('open')) return;
       if (e.key === 'Escape') {
+        const lb = document.getElementById('lightbox');
         lb.classList.remove('open');
         document.body.style.overflow = '';
       }
-      if (e.key === 'ArrowLeft') lightboxNav(e, -1);
-      if (e.key === 'ArrowRight') lightboxNav(e, 1);
     });
 
     // ─── Background Stars ──────────────────────────────────────────
@@ -809,17 +710,8 @@
       }
     }
 
-    // Keyboard nav for gallery (arrow keys when lightbox is closed)
-    document.addEventListener('keydown', (e) => {
-      const lb = document.getElementById('lightbox');
-      if (lb.classList.contains('open')) return;
-      if (e.key === 'ArrowLeft') changeSlide(-1);
-      if (e.key === 'ArrowRight') changeSlide(1);
-    });
-
     // ─── Init ──────────────────────────────────────────────────────
     createBackgroundStars();
-    startAutoSlide();
     setTimeout(launchConfetti, 500);
   </script>
 </body>
