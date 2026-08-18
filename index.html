@@ -240,11 +240,18 @@
     /* ─── Photo Gallery ────────────────────────────────────────── */
     .gallery-section {
       margin: 0.5rem auto 1.2rem;
-      max-width: 500px;
+      width: 100%;
       animation: fadeIn 0.8s ease 0.3s both;
     }
 
-    .gallery-container {
+    .gallery-duo {
+      display: flex;
+      gap: 12px;
+      align-items: stretch;
+    }
+
+    .gallery-photo-card {
+      flex: 1;
       position: relative;
       border-radius: 18px;
       overflow: hidden;
@@ -253,23 +260,22 @@
       border: 2px solid var(--card-border);
       box-shadow: 0 12px 35px rgba(83, 58, 183, 0.12);
       animation: borderGlow 3s ease-in-out infinite;
+      cursor: zoom-in;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
     }
 
-    .gallery-track {
-      display: flex;
-      transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+    .gallery-photo-card:hover {
+      transform: translateY(-4px) scale(1.02);
+      box-shadow: 0 20px 50px rgba(83, 58, 183, 0.2);
     }
 
-    .gallery-slide {
-      min-width: 100%;
-      position: relative;
-    }
-
-    .gallery-slide img {
+    .gallery-photo-card img {
       width: 100%;
+      height: 100%;
       display: block;
-      object-fit: contain;
-      max-height: 520px;
+      object-fit: cover;
+      min-height: 320px;
+      max-height: 480px;
       background: linear-gradient(135deg, #f8f6ff, #fef0f5);
     }
 
@@ -278,7 +284,7 @@
       bottom: 0;
       left: 0;
       right: 0;
-      padding: 2rem 1.2rem 1rem;
+      padding: 1.5rem 1rem 0.8rem;
       background: linear-gradient(to top, rgba(45, 31, 94, 0.85) 0%, rgba(45, 31, 94, 0.4) 60%, transparent 100%);
       color: #fff;
       text-align: left;
@@ -286,99 +292,26 @@
 
     .gallery-label-title {
       font-family: var(--font-voice);
-      font-size: 18px;
+      font-size: 15px;
       font-weight: 700;
       margin-bottom: 2px;
       text-shadow: 0 1px 4px rgba(0,0,0,0.3);
     }
 
     .gallery-label-sub {
-      font-size: 12px;
+      font-size: 11px;
       opacity: 0.85;
       font-weight: 400;
     }
 
-    /* Navigation Arrows */
-    .gallery-nav {
-      position: absolute;
-      top: 50%;
-      transform: translateY(-50%);
-      width: 40px;
-      height: 40px;
-      border-radius: 50%;
-      border: none;
-      background: rgba(255, 255, 255, 0.85);
-      backdrop-filter: blur(8px);
-      box-shadow: 0 4px 15px rgba(0,0,0,0.15);
-      color: var(--purple-deep);
-      font-size: 18px;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      transition: all 0.3s ease;
-      z-index: 5;
-      font-family: var(--font-sans);
-    }
-
-    .gallery-nav:hover {
-      background: #fff;
-      transform: translateY(-50%) scale(1.1);
-      box-shadow: 0 6px 20px rgba(83, 58, 183, 0.25);
-    }
-
-    .gallery-nav:active {
-      transform: translateY(-50%) scale(0.95);
-    }
-
-    .gallery-nav.prev { left: 12px; }
-    .gallery-nav.next { right: 12px; }
-
-    /* Dot Indicators */
-    .gallery-dots {
-      display: flex;
-      justify-content: center;
-      gap: 10px;
-      padding: 14px 0 10px;
-    }
-
-    .gallery-dot {
-      width: 10px;
-      height: 10px;
-      border-radius: 50%;
-      border: 2px solid var(--purple-glow);
-      background: transparent;
-      cursor: pointer;
-      transition: all 0.3s ease;
-      padding: 0;
-    }
-
-    .gallery-dot.active {
-      background: var(--purple-mid);
-      border-color: var(--purple-mid);
-      transform: scale(1.2);
-      box-shadow: 0 0 8px rgba(83, 58, 183, 0.4);
-    }
-
-    .gallery-dot:hover:not(.active) {
-      border-color: var(--purple-soft);
-      background: rgba(83, 58, 183, 0.2);
-    }
-
-    /* Image shimmer badge */
-    .gallery-badge {
-      position: absolute;
-      top: 14px;
-      right: 14px;
-      background: rgba(255,255,255,0.85);
-      backdrop-filter: blur(8px);
-      border-radius: 20px;
-      padding: 4px 12px;
-      font-size: 11px;
-      font-weight: 600;
-      color: var(--purple-mid);
-      z-index: 5;
-      letter-spacing: 0.5px;
+    @media (max-width: 480px) {
+      .gallery-duo {
+        flex-direction: column;
+      }
+      .gallery-photo-card img {
+        min-height: 240px;
+        max-height: 360px;
+      }
     }
 
     /* ─── Fullscreen Modal ─────────────────────────────────────── */
@@ -552,21 +485,34 @@
     <div class="title-name">Samvarsha! 🎉</div>
     <p class="subtitle">Click the photo to zoom ✨</p>
 
-    <!-- Photo -->
+    <!-- Photos side by side -->
     <div class="gallery-section">
-      <div class="gallery-container" id="galleryContainer">
-        <div class="gallery-slide">
+      <div class="gallery-duo">
+
+        <!-- Image 1: Gajju Bomma Collage -->
+        <div class="gallery-photo-card" onclick="openLightbox('images/gajju-collage.png')">
           <img
-            src="images/birthday-collage.jpg"
-            alt="Happy Birthday Samvarsha — photo collage"
-            onclick="openLightbox()"
-            style="cursor: zoom-in;"
+            src="images/gajju-collage.png"
+            alt="Love You Gajju Bomma — photo collage"
           />
           <div class="gallery-label">
-            <div class="gallery-label-title">✨ Birthday Queen ✨</div>
-            <div class="gallery-label-sub">Happy Birthday Samvarsha!</div>
+            <div class="gallery-label-title">💜 Love You Gajju Bomma</div>
+            <div class="gallery-label-sub">Always & Forever 🦋</div>
           </div>
         </div>
+
+        <!-- Image 2: Dear Gajju Bomma Letter -->
+        <div class="gallery-photo-card" onclick="openLightbox('images/gajju-letter.jpg')">
+          <img
+            src="images/gajju-letter.jpg"
+            alt="Dear Gajju Bomma — heartfelt letter"
+          />
+          <div class="gallery-label">
+            <div class="gallery-label-title">💌 Dear Gajju Bomma</div>
+            <div class="gallery-label-sub">From Buddiii 🩷</div>
+          </div>
+        </div>
+
       </div>
     </div>
 
@@ -576,9 +522,9 @@
 
   <script>
     // ─── Lightbox ──────────────────────────────────────────────────
-    function openLightbox() {
+    function openLightbox(src) {
       const lb = document.getElementById('lightbox');
-      document.getElementById('lightboxImg').src = 'images/birthday-collage.jpg';
+      document.getElementById('lightboxImg').src = src;
       lb.classList.add('open');
       document.body.style.overflow = 'hidden';
     }
